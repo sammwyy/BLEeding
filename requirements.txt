@@ -1,0 +1,2 @@
+click>=0.4.6
+pybluez @ git+https://github.com/pybluez/pybluez.git#egg=pybluez
