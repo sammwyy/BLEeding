@@ -1,11 +1,22 @@
 #! /usr/bin/env python3
 import click
 
+from modules.enum import enum_services
 from modules.discover import discover, ble_discover
 from modules.deauth import deauth_async
-from modules.mass_ping import mass_ping_async
+
+from utils.bt_utils import BTProtocol
+from utils.cli_utils import EnumType
 from utils.os_utils import get_vcores, is_ble_supported, is_l2ping_supported
 
+# Constants
+DEFAULT_BT_INTERFACE = "hci0"
+DEFAULT_BT_PROTOCOL = "l2cap"
+DEFAULT_BUFFER_SIZE = 512
+L2CAP_PSM_HCI = 0x1001
+VCORES_COUNT = get_vcores()
+
+# Main command
 @click.group()
 def main():
     pass
@@ -26,33 +37,26 @@ def scan(ble: bool):
 # DeAuth command
 @main.command()
 @click.argument("target", required=True, type=str)
-@click.option("--size", "-s", default=512, help="Length of packets to send")
-@click.option("--threads", "-t", default=get_vcores(), help="Threads count to use")
-def deauth(target: str, size: int, threads: int):
+@click.option("--port", "-p", default=L2CAP_PSM_HCI, help="Port to use")
+@click.option("--protocol", "-P", default=DEFAULT_BT_PROTOCOL, help="Port to use",type=EnumType(BTProtocol))
+@click.option("--size", "-s", default=DEFAULT_BUFFER_SIZE, help="Length of packets to send")
+@click.option("--threads", "-t", default=VCORES_COUNT, help="Threads count to use")
+def deauth(target: str, port: int, protocol: BTProtocol, size: int, threads: int):
     print("Initializing DeAuth attack...")
     print(f"Target:         {target}")
+    print(f"Port:           {port}")
+    print(f"Protocol:       {protocol.name}")
     print(f"Packet size:    {size}")
     print(f"Threads:        {threads}")
-    deauth_async(target, size, threads)
-        
-# MassPing command
+    deauth_async(target, port, protocol, size, threads)
+
+# Enum command
 @main.command()
 @click.argument("target", required=True, type=str)
-@click.option("--interface", "-i", default="hci0", help="Bluetooth interface to use")
-@click.option("--size", "-s", default=512, help="Length of packets to send")
-@click.option("--threads", "-t", default=get_vcores(), help="Threads count to use")
-def massping(target: str, interface: str, size: int, threads: int):
-    if not is_l2ping_supported():
-        print("l2ping not installed, please install it first (Only linux is supported)")
-        exit(1)
-    
-    print("Initializing DeAuth attack...")
-    print(f"Target:         {target}")
-    print(f"Interface:      {interface}")
-    print(f"Packet size:    {size}")
-    print(f"Threads:        {threads}")
-    mass_ping_async(target, interface, size, threads)
-    
+def enum(target: str):
+    enum_services(target)
+
+# Start CLI
 def start():
     try:
         main()

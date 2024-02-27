@@ -51,15 +51,18 @@ python bleeding <options> COMMAND
 | Command | Description | Options | OS Support |
 | ------- | ----------- | ------- | ------- |
 | `scan` | Scan for devices. | `ble` | 🐧 🍎 🟦 🍇 |
-| `deauth <TARGET>` | Spam DeAuth requests | `size`, `threads` | 🐧 🍇 |
-| `massping <TARGET>` | Spam L2CAP ping requests | `interface`, `size`, `threads` | 🐧 🍇 |
+| `enum <TARGET>` | Enum device services | | 🐧 🍎 🟦 🍇 |
+| `deauth <TARGET>` | Spam DeAuth requests | `port`, `protocol`, `size`, `threads` | 🐧 🍇 |
 
-| Option | Short | Description | Required | Default |
-| ------ | ----- | ----------- | -------- | ------- |
-| `--ble` | `-b` | Use BLE instead of Bluetooth. | ❌ | ❌ |
-| `--size` | `-s` | Size of the packets. | ❌ | 512 |
-| `--threads` | `-t` | Number of threads. | ❌ | (vcore count) |
-| `--interface` | `-i` | Interface to use. | ❌ | hci0 |
+| Option | Short | Description | type | Default |
+| ------ | ----- | ----------- | :--: | :-----: |
+| `--ble` | `-b` | Use BLE instead of Bluetooth. | bool | ❌ |
+| `--port` | `-p` | Port to use. | int | 4097 |
+| `--protocol` | `-P` | Protocol to use. | **enum:** l2cap, rfcomm | l2cap |
+| `--size` | `-s` | Size of the packets. | int | 512 |
+| `--threads` | `-t` | Number of threads. |  int | (vcore count) |
+
+> Note: All flags are optional.
 
 ## 🤝 Contributing
 
