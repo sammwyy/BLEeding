@@ -8,6 +8,7 @@ def get_vcores():
 def is_linux():
     return platform.system() == 'Linux'
 
+# Unused function
 def is_binary_installed(binary_name: str):
     command = is_linux() and f"which {binary_name}" or f"where {binary_name}"
     try:
@@ -21,6 +22,3 @@ def is_ble_supported():
         return True
     else:
         return False
-    
-def is_l2ping_supported():
-    return is_binary_installed("l2ping")

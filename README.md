@@ -51,6 +51,7 @@ python bleeding <options> COMMAND
 | Command | Description | Options | OS Support |
 | ------- | ----------- | ------- | ------- |
 | `scan` | Scan for devices. | `ble` | 🐧 🍎 🟦 🍇 |
+| `random-mac` | Generate random trusted MAC addresses | | 🐧 🍎 🟦 🍇 |
 | `enum <TARGET>` | Enum device services | | 🐧 🍎 🟦 🍇 |
 | `deauth <TARGET>` | Spam DeAuth requests | `port`, `protocol`, `size`, `threads` | 🐧 🍇 |
 

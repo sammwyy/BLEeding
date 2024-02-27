@@ -7,7 +7,8 @@ from modules.deauth import deauth_async
 
 from utils.bt_utils import BTProtocol
 from utils.cli_utils import EnumType
-from utils.os_utils import get_vcores, is_ble_supported, is_l2ping_supported
+from utils.mac_utils import random_mac_all_vendors, random_mac_tail
+from utils.os_utils import get_vcores, is_ble_supported
 
 # Constants
 DEFAULT_BT_INTERFACE = "hci0"
@@ -55,6 +56,19 @@ def deauth(target: str, port: int, protocol: BTProtocol, size: int, threads: int
 @click.argument("target", required=True, type=str)
 def enum(target: str):
     enum_services(target)
+    
+# Random MAC
+@main.command()
+def random_mac():
+    print("Generating random MAC addresses...")
+    macs = random_mac_all_vendors()
+    
+    for mac in macs:
+        vendor = mac[0].ljust(10, " ")
+        addr = mac[1]
+        
+        print(f" * {vendor}\t{addr}")
+    
 
 # Start CLI
 def start():
