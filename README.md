@@ -50,10 +50,10 @@ python bleeding <options> COMMAND
 
 | Command | Description | Options | OS Support |
 | ------- | ----------- | ------- | ------- |
-| `scan` | Scan for devices. | `ble` | 🐧 🍎 🟦 🍇 |
+| `scan` | Scan for devices. | `ble` | 🐧 🍎 c 🍇 |
 | `random-mac` | Generate random trusted MAC addresses | | 🐧 🍎 🟦 🍇 |
 | `enum <TARGET>` | Enum device services | | 🐧 🍎 🟦 🍇 |
-| `deauth <TARGET>` | Spam DeAuth requests | `port`, `protocol`, `size`, `threads` | 🐧 🍇 |
+| `deauth <TARGET>` | Spam DeAuth requests | `port`, `protocol`, `size`, `threads` | 🐧 🍇 🟦 |
 
 | Option | Short | Description | type | Default |
 | ------ | ----- | ----------- | :--: | :-----: |
@@ -63,7 +63,7 @@ python bleeding <options> COMMAND
 | `--size` | `-s` | Size of the packets. | int | 512 |
 | `--threads` | `-t` | Number of threads. |  int | (vcore count) |
 
-> Note: All flags are optional.
+> Note: All flags are optional. Windows doesn't support L2CAP protocol.
 
 ## 🤝 Contributing
 

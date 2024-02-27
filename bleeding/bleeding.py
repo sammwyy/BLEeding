@@ -8,7 +8,7 @@ from modules.deauth import deauth_async
 from utils.bt_utils import BTProtocol
 from utils.cli_utils import EnumType
 from utils.mac_utils import random_mac_all_vendors, random_mac_tail
-from utils.os_utils import get_vcores, is_ble_supported
+from utils.os_utils import get_vcores, is_ble_supported, is_windows
 
 # Constants
 DEFAULT_BT_INTERFACE = "hci0"
@@ -43,6 +43,10 @@ def scan(ble: bool):
 @click.option("--size", "-s", default=DEFAULT_BUFFER_SIZE, help="Length of packets to send")
 @click.option("--threads", "-t", default=VCORES_COUNT, help="Threads count to use")
 def deauth(target: str, port: int, protocol: BTProtocol, size: int, threads: int):
+    if protocol == BTProtocol.l2cap and is_windows():
+        print("L2CAP protocol is not supported on Windows, please select RFCOMM using -P flag.")
+        exit(1)
+    
     print("Initializing DeAuth attack...")
     print(f"Target:         {target}")
     print(f"Port:           {port}")
