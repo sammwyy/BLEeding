@@ -1,9 +1,10 @@
+import logger
 import multiprocessing
-import sys
 import time
 
 def create_async_task(threads: int, func, args=()):
-    print(f"\nStarting thread pool with {threads} workers...")
+    logger.info("")
+    logger.info(f"Starting thread pool with <cyan>{threads} workers...")
     time.sleep(1)
 
     error = None
@@ -27,9 +28,9 @@ def create_async_task(threads: int, func, args=()):
                 break
         
         if error:
-            print(f"\nThread pool throws an exception: {error}")
+            logger.err(f"\nThread pool throws an exception: <lred>{error}")
         
-        print("Stopping threads...")
+        logger.info("Stopping threads...")
         pool.close()
         pool.terminate()
         pool.join()
