@@ -45,12 +45,17 @@ pip install -r requirements.txt
 ## 📚 Usage
 
 ```bash
-python bleeding <options> COMMAND
+python bleeding.py <options> COMMAND
+
+# Or make it executable
+chmod +x bleeding.py
+./bleeding.py <options> COMMAND
 ```
 
 | Command | Description | Options | OS Support |
 | ------- | ----------- | ------- | ------- |
-| `scan` | Scan for devices. | `ble` | 🐧 🍎 c 🍇 |
+| `scan` | Scan for devices. | `ble` | 🐧 🍎 🟦 🍇 |
+| `i` | **Interactive mode**: Scan → Select device → Enum services → Select service → DeAuth (60s) | | 🐧 🍎 🟦 🍇 |
 | `random-mac` | Generate random trusted MAC addresses | | 🐧 🍎 🟦 🍇 |
 | `enum <TARGET>` | Enum device services | | 🐧 🍎 🟦 🍇 |
 | `deauth <TARGET>` | Spam DeAuth requests | `port`, `protocol`, `size`, `threads` | 🐧 🍇 🟦 |
@@ -65,6 +70,24 @@ python bleeding <options> COMMAND
 
 > Note: All flags are optional. Windows doesn't support L2CAP protocol.
 
+### 🎮 Interactive Mode
+
+The interactive mode (`i` command) provides a user-friendly TUI workflow:
+
+1. **Scan** - Automatically scans for nearby Bluetooth devices (5s)
+2. **Select Device** - Choose a device from the numbered list
+3. **Enumerate Services** - Automatically enumerates all services on the selected device
+4. **Select Service** - Choose a service/port to attack
+5. **Attack** - Automatically launches a 60-second DeAuth attack
+
+**Example:**
+```bash
+python bleeding.py i
+
+# The tool will guide you through each step interactively
+# Just enter the numbers to make your selections
+```
+
 ## 🤝 Contributing
 
 Contributions, issues and feature requests are welcome!
@@ -76,5 +99,5 @@ Give a ⭐️ if this project helped you! Or buy me a coffee-latte 🙌 [Ko-fi](
 
 ## 📝 License
 
-Copyright © 2024 [Sammwy](https://github.com/sammwyy).
+Copyright © 2025 [Sammwy](https://github.com/sammwyy).
 This project is [MIT](LICENSE) licensed.
