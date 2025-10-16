@@ -1,6 +1,13 @@
 # 🩸 BLEeding
 
-BLEeding is a tool that allows you to jam Bluetooth and BLE devices. It can be used to spam DeAuth requests or L2CAP ping requests. It supports Linux, macOS, Windows and Raspberry PI.
+BLEeding is a tool that allows you to jam Bluetooth (BR/EDR) and BLE devices. It can be used to spam DeAuth requests or L2CAP ping requests. It supports Linux, macOS, Windows and Raspberry PI.
+
+**Key Features:**
+- 🔵 **Dual Mode Support**: Works with both classic Bluetooth (BR/EDR) and Bluetooth Low Energy (BLE)
+- 🎯 **Modular Architecture**: Separate implementations for BLE (`bleak`) and BR/EDR (`pybluez`)
+- 🚀 **Multi-threaded**: Supports concurrent attacks for maximum impact
+- 🖥️ **Interactive Mode**: User-friendly TUI for device discovery and attacks
+- 🔄 **Cross-Platform**: Works on Linux, macOS, Windows, and Raspberry Pi
 
 This tool was created for educational purposes only. I do not take any responsibility for the misuse of this tool.
 
@@ -9,21 +16,23 @@ This tool was created for educational purposes only. I do not take any responsib
 **🐧 Linux / 🍇 Raspberry PI**
 
 ```bash
-# Install dependencies.
-sudo apt-get install git pkg-config python pip libbluetooth-dev libboost-python-dev libboost-thread-dev libglib2.0-dev
+# Install system dependencies for BR/EDR support
+sudo apt-get install git pkg-config python3 python3-pip libbluetooth-dev libboost-python-dev libboost-thread-dev libglib2.0-dev
+
+# BLE support uses bleak (installed via pip, no extra system dependencies needed)
 ```
 
 **🍎 macOS**
 
 ```bash
-# Install dependencies.
+# Install dependencies (BLE works out of the box via bleak)
 brew install bluez
 ```
 
 **🟦 Windows**
 
 ```bash
-# Install dependencies.
+# Install dependencies (BLE works out of the box via bleak)
 choco install git python3
 ```
 
@@ -36,11 +45,11 @@ git clone https://github.com/sammwyy/bleeding
 # Go to the repository.
 cd bleeding
 
-# Install the requirements.
+# Install Python requirements.
 pip install -r requirements.txt
 ```
 
-> Note: In order to use BLE in Linux, you must install "gattlib" python module. You can install it using the following command: `pip install gattlib`.
+> **Note**: The tool now uses `bleak` for BLE support (cross-platform) and `pybluez` for BR/EDR support. Both are installed via requirements.txt.
 
 ## 📚 Usage
 
@@ -54,38 +63,76 @@ chmod +x bleeding.py
 
 | Command | Description | Options | OS Support |
 | ------- | ----------- | ------- | ------- |
-| `scan` | Scan for devices. | `ble` | 🐧 🍎 🟦 🍇 |
-| `i` | **Interactive mode**: Scan → Select device → Enum services → Select service → DeAuth (60s) | | 🐧 🍎 🟦 🍇 |
+| `scan` | Scan for devices. | `--ble` | 🐧 🍎 🟦 🍇 |
+| `enum <TARGET>` | Enumerate device services | `--ble` | 🐧 🍎 🟦 🍇 |
+| `deauth <TARGET>` | Spam DeAuth/flood requests | `--ble`, `--port`, `--protocol`, `--size`, `--threads`, `--timeout` | 🐧 🍇 🟦 |
+| `i` | **Interactive mode**: Scan → Select → Enum → Attack | `--ble` | 🐧 🍎 🟦 🍇 |
 | `random-mac` | Generate random trusted MAC addresses | | 🐧 🍎 🟦 🍇 |
-| `enum <TARGET>` | Enum device services | | 🐧 🍎 🟦 🍇 |
-| `deauth <TARGET>` | Spam DeAuth requests | `port`, `protocol`, `size`, `threads` | 🐧 🍇 🟦 |
 
-| Option | Short | Description | type | Default |
-| ------ | ----- | ----------- | :--: | :-----: |
-| `--ble` | `-b` | Use BLE instead of Bluetooth. | bool | ❌ |
-| `--port` | `-p` | Port to use. | int | 4097 |
-| `--protocol` | `-P` | Protocol to use. | **enum:** l2cap, rfcomm | l2cap |
-| `--size` | `-s` | Size of the packets. | int | 512 |
-| `--threads` | `-t` | Number of threads. |  int | (vcore count) |
+### Command Options
 
-> Note: All flags are optional. Windows doesn't support L2CAP protocol.
+| Option | Short | Description | Type | Default | Applies To |
+| ------ | ----- | ----------- | :--: | :-----: | :--------: |
+| `--ble` | `-b` | Use BLE mode instead of BR/EDR | bool | ❌ | All commands |
+| `--port` | `-p` | Port to use (BR/EDR only) | int | 4097 | deauth |
+| `--protocol` | `-P` | Protocol: l2cap or rfcomm (BR/EDR only) | enum | l2cap | deauth |
+| `--size` | `-s` | Size of the packets | int | 512 | deauth |
+| `--threads` | `-t` | Number of threads |  int | (vcore count) | deauth |
+| `--timeout` | `-T` | Attack duration in seconds | int | none | deauth |
+
+> **Notes**: 
+> - All flags are optional
+> - Windows doesn't support L2CAP protocol for BR/EDR attacks
+> - BLE mode uses GATT characteristic flooding
+> - BR/EDR mode uses socket flooding (L2CAP or RFCOMM)
 
 ### 🎮 Interactive Mode
 
 The interactive mode (`i` command) provides a user-friendly TUI workflow:
 
-1. **Scan** - Automatically scans for nearby Bluetooth devices (5s)
+1. **Scan** - Automatically scans for nearby devices (5s)
 2. **Select Device** - Choose a device from the numbered list
 3. **Enumerate Services** - Automatically enumerates all services on the selected device
 4. **Select Service** - Choose a service/port to attack
 5. **Attack** - Automatically launches a 60-second DeAuth attack
 
-**Example:**
+**Examples:**
+
 ```bash
+# Interactive mode for BR/EDR (classic Bluetooth)
 python bleeding.py i
 
-# The tool will guide you through each step interactively
-# Just enter the numbers to make your selections
+# Interactive mode for BLE
+python bleeding.py i --ble
+```
+
+### 📡 Usage Examples
+
+**Scanning:**
+```bash
+# Scan for BR/EDR devices
+python bleeding.py scan
+
+# Scan for BLE devices
+python bleeding.py scan --ble
+```
+
+**Enumerate Services:**
+```bash
+# Enumerate BR/EDR device services
+python bleeding.py enum AA:BB:CC:DD:EE:FF
+
+# Enumerate BLE device services (GATT)
+python bleeding.py enum AA:BB:CC:DD:EE:FF --ble
+```
+
+**DeAuth/Flood Attack:**
+```bash
+# Attack BR/EDR device with L2CAP
+python bleeding.py deauth AA:BB:CC:DD:EE:FF --port 4097 --protocol l2cap --threads 4
+
+# Attack BLE device (60 second duration)
+python bleeding.py deauth AA:BB:CC:DD:EE:FF --ble --threads 4 --timeout 60
 ```
 
 ## 🤝 Contributing

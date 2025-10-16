@@ -1,3 +1,4 @@
 click>=0.4.6
 colorama>=0.4.6
 pybluez @ git+https://github.com/pybluez/pybluez.git#egg=pybluez
+bleak>=0.21.0
